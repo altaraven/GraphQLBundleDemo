@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+
+  nginx:
+    image: nginx:1.11-alpine
+    ports:
+      - "8100:80"
+    volumes:
+      - ./etc/dev/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - .:/app
+    depends_on:
+      - php
+
+  php:
+    image: jorge07/alpine-php:7.2-dev-sf
+    ports:
+      - "2323:22"
+    volumes:
+      - .:/app
+    depends_on:
+      - pgsql_graphql
+
+  pgsql_graphql:
+    image: postgres:9.6
+    container_name: pgsql_graphql
+    ports:
+    - "5431:5432"
+    environment:
+    - "POSTGRES_PASSWORD=rr_api"
+    - "POSTGRES_USER=rr_api"
+    - "POSTGRES_DB=rr_api"
+    volumes:
+    - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
